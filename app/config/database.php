@@ -40,11 +40,11 @@ return [
     'drivers' => [
         'pgsql' => new Config\PostgresDriverConfig(
             connection: new Config\Postgres\TcpConnectionConfig(
-                database: env('QUEUE_CONNECTION', 'rr'),
-                host: env('QUEUE_CONNECTION', 'rr'),
-                port: env('QUEUE_CONNECTION', 5432),
-                user: env('QUEUE_CONNECTION', 'rr'),
-                password: env('QUEUE_CONNECTION', 'rr'),
+                database: env('DB_DATABASE', 'rr'),
+                host: env('DB_HOST', 'rr'),
+                port: (int) env('DB_PORT', 5432),
+                user: env('DB_USERNAME', 'rr'),
+                password: env('DB_PASSWORD', 'rr'),
             ),
             queryCache: true
         ),
