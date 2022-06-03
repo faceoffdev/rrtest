@@ -1,0 +1,51 @@
+version: '3.8'
+
+networks:
+  proxy:
+    name: proxy
+    external: true
+  workspace:
+    name: workspace
+    external: true
+  local:
+    driver: bridge
+
+volumes:
+  libraries:
+    name: libraries
+    external: true
+
+services:
+  php:
+    build:
+      context: .
+      dockerfile: ./.docker/php/Dockerfile
+    env_file:
+      - .env
+    restart: always
+    networks:
+      - workspace
+      - local
+    volumes:
+      - ./app:/var/www/app
+      - ./runtime:/var/www/runtime
+      - ./composer.json:/var/www/composer.json
+      - ./.env:/var/www/.env
+      - ./vendor:/var/www/vendor
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./.docker/nginx/Dockerfile
+    restart: always
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - php
+    networks:
+      - proxy
+      - local
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.rrtest.rule=HostRegexp(`rrtest.{host:.+}`)
+      - traefik.http.services.rrtest.loadbalancer.server.port=80
